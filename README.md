@@ -25,6 +25,8 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # 0 Abstract
 
+IPLD Inline Links are a format for including linked graphs in 
+
 Spanning DAG is a container for IPLD which exists somewhere between an unpacked representation and a [CAR file]. It includes many quality of life features including inlined linked DAGs and inherited encoding.
 
 # 1 Introduction
@@ -135,9 +137,17 @@ flowchart
     d --> e
 ```
 
-There are three basic strategies: duplication, spanning trees, and tabling. [CAR] files (and block stores) already handle the tabled approach, and so do not require discussion here.
+There are two basic strategies that take advatage of inlining: duplication and spanning trees. When inlinig is not used, the strategy is a form of tabling (CAR files and blockstores), and are included here for completeness.
 
-## 5.1 Duplication
+| Strategy              | Inline              | Example Implementation |
+|-----------------------|---------------------|------------------------|
+| Redundant Tree        | Always              | Tree (JSON, CBOR)      |
+| Minimal Spanning Tree | Once per unique CID | Tree (JSON, CBOR)      |
+| Table                 | Never               | CAR file, blockstore   |
+
+These strategies MAY be mixed: there is no way to encoforce that they be purely adhered to.
+
+## 5.1 Redundant Tree
 
 The naive strategy inlines the nested DAG everywhere it is found. This trades off redundancy for simplicity: any part of the graph MAY be explored completely locally. If the graph is deep, this strategy MUST copy any linked children as well.
 
@@ -155,7 +165,7 @@ flowchart
 
 A balance between fully tabling connected graphs and inlining everywhere is inlining once and using references elsewhere. This MAY be achieved with a [minimal spanning tree][^no enforce]. 
 
-As a data transfer format, this encoding is often convenient. It eliminates the need for a special decoder and can use standard tools for e.g. JSON and CBOR. 
+As a data transfer format, this encoding is often convenient. It eliminates the need for a special decoder and can use standard tools from JSON and CBOR. 
 
 [^no enforce]: Please note that there is no way to enforce that the spanning tree be minimal.
 
@@ -168,8 +178,9 @@ flowchart
     d --> e
 ```
 
-## 5.3 CAR File
+## 5.3 Tabling
 
+Included here for completeness, a tabling strategy SHOULD be used when no inlining is desired. This is often the most efficient strategy for storage and retrieval of cross-linked data.
 
 ``` mermaid
 flowchart LR
@@ -191,26 +202,33 @@ flowchart LR
     d -.->|ref| e
 ```
 
-<!-- TODOS -->
+<!--
+# 6 Feature Signalling
 
+Extended IPLD / xIPLD
+
+``` json
+{
+  "xipld/v0.1": {
+    "h": {
+      "inline": "true",
+      "foo": "bar"
+     },
+    "d": {
+      "hello": "world",
+      "time": 1234567890
+    }
+  }
+}
 ```
--- FIXME use a feature table instead?
-type SpanningCapsule struct {
-  capsule Any (rename "ipld/spanning/v0.1")
-  canon   Bool (implicit false)
-}
 
-type FeatureTable struct {
-   
-}
-
-type Capsule struct {
-  head FeatureTable (implicit {})
-  data Any (rename "ipld/ext/v0.1")
+``` ipldsch
+type ExtendedIPLD struct {
+  head {String : Any}
+  data Any (rename "xipld/v0.1")
 }
 ```
-
-<!-- Links -->
+-->
 
 [Brooklyn Zelenka]: https://github.com/expede 
 [Fission]: https://fission.codes
