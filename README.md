@@ -65,7 +65,7 @@ type InlineWrapper struct {
 
 ## 2.2 Inlined DAG Payload
 
-The inlined DAG payload MUST contain the inlined 
+The inlined DAG payload MUST contain the inlined DAG. The CID MAY be present, omited, or set to `null`.
 
 ``` ipldsch
 type InlineLink struct {
@@ -74,14 +74,14 @@ type InlineLink struct {
 }
 ```
 
-### 2.2.1 Explicit Encoding
+### 2.2.1 Explicit
 
 ``` js
 {
   "name": "Alonzo Church",
-  "birthdate": {
+  "birthday": {
     "/": {
-      "cid": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4", // Encoded as DAG-CBOR
+      "cid": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4", // DAG-CBOR & SHA2-256
       "dag": {
         "day": 14,
         "month": 6
@@ -91,40 +91,50 @@ type InlineLink struct {
 }
 ```
 
-### 2.2.2 Inherited Encoding
-
-``` js
-{
-  "name": "Alonzo Church",
-  "birthdate": {
-    "/": {
-      "cid": null, // Inherits encoding from container
-      "dag": {
-        "day": 14,
-        "month": 6
-      }
-    }
-  }
-}
-```
-
-# 3 Consequences
+Explicit encoding and hash algorithm work as normal: the CID MAY be given in advance via the `"cid"` field, and MUST validly describe the `"dag"` field. 
  
+### 2.2.2 Inherited
+
+``` js
+{
+  "name": "Alonzo Church",
+  "birthday": {
+    "/": {
+      "cid": null, // Inherits encoding & hash algorithm from container
+      "dag": {
+        "day": 14,
+        "month": 6
+      }
+    }
+  }
+}
+
+// Or omit the "cid" field
+
+{
+  "name": "Alonzo Church",
+  "birthday": {
+    "/": {
+      "dag": {
+        "day": 14,
+        "month": 6
+      }
+    }
+  }
+}
+```
+
+Inherited encoding is helpful in many situations. A core intention of IPLD is to abstract away from the exact data encoding. When including a link in IPLD, a hash algorithm and encoding MUST be hardcoded. Such choices are often premature, and lead to awkward design choices to avoid this encoding, or excpetions in prose.
+
+Inheriting from the surrounding context enables a level of flexibility for the nested data. Its hash and encoding MUST be the same as the parent, which is by far the most common case. In order to calculate the hash of the entire structure, the direct parent's encoding MUST be known, then passed to the encoder for the nested graph, the CID calculated, and placed into the parent. See more in [canonicalization].
+
+The implicit strategy MAY lead to cases where the same DAG generates different CIDs in the same strutcure, based on different parent encoding contexts.
+
+# 3 Encoding Strategies
+
 > In principle, inlining is dead simple: just replace the call of a function by an instance of its body. But any compiler-writer will tell you that inlining is a black art, full of delicate compromises that work together to give good performance without unnecessary code bloat.
 >
 > — [SPJ] & [Simon Marlow], [Secrets of the Glasgow Haskell Compiler inliner][GHC Secrets]
- 
-Note! Cannot just hash to check anymore. You need to actually unpack the container.
-
-optionally wrap the entire thig in a Wraper.
-
-Spanning trees
-
-Similar to `{"/": {"bytes": ...}}`
-
-# 4 Canonicalization
-
-# 5 Encoding Strategies
 
 Encoding is trivial on many structures, such as linked lists and trees. The existence of diamond graphs pose a special problem: how many times should a linked graph be inlined versus referenced?
 
@@ -139,15 +149,15 @@ flowchart
 
 There are two basic strategies that take advatage of inlining: duplication and spanning trees. When inlinig is not used, the strategy is a form of tabling (CAR files and blockstores), and are included here for completeness.
 
-| Name                  | Inlining Strategy   | Space | Lookup | Example Implementation |
-|-----------------------|---------------------|-------|--------|------------------------|
-| Redundant Tree        | Always              | Large | Fast   | Tree (JSON, CBOR)      |
-| Minimal Spanning Tree | Once per unique CID | Small | Slow   | Tree (JSON, CBOR)      |
-| Table                 | Never               | Small | Medium | CAR file, blockstore   |
+| Name                  | Inlining Strategy   | Space | Lookup | Example Implementation  |
+|-----------------------|---------------------|-------|--------|-------------------------|
+| Redundant Tree        | Always              | Large | Fast   | Normal JSON, CBOR, etc  |
+| Minimal Spanning Tree | Once per unique CID | Small | Slow   | DAG-JSON, DAG-CBOR, etc |
+| Table                 | Never               | Small | Medium | CAR file, blockstore    |
 
 These strategies MAY be mixed: there is no way to encoforce that they be purely adhered to.
 
-## 5.1 Redundant Tree
+## 3.1 Redundant Tree
 
 The naive strategy inlines the nested DAG everywhere it is found. This trades off redundancy for simplicity: any part of the graph MAY be explored completely locally. If the graph is deep, this strategy MUST copy any linked children as well.
 
@@ -163,7 +173,7 @@ flowchart
     d2 --> e2[e]
 ```
 
-## 5.2 Minimal Spanning Tree
+## 3.2 Minimal Spanning Tree
 
 A balance between fully tabling connected graphs and inlining everywhere is inlining once and using references elsewhere. This MAY be achieved with a [minimal spanning tree].
 
@@ -180,7 +190,7 @@ flowchart
     d --> e
 ```
 
-## 5.3 Tabling
+## 3.3 Tabling
 
 Included here for completeness, a tabling strategy SHOULD be used when no inlining is desired. This is often the most efficient strategy for storage and retrieval of cross-linked data.
 
@@ -203,13 +213,57 @@ flowchart LR
     d -.->|ref| e
 ```
 
-# 6 FAQ
+# 4 IPLD Canonicalization
 
-## 6.1 Why Use Nesting?
+Inline links MUST NOT be used in calculation of CIDs. The only time that inline links interact with CIDs MUST be when inheriting the CID configuration from the parent context.
+
+To calculate the CID of a DAG that contains inline links, first walk the graph and replace all inline links with regular CID links (i.e. of the format `{"/": <cid>}`). This MUST be performed recursively when encountering an inline link. Once converted to normal IPLD, proceed as normal.
+
+## 4.1 Example
+
+``` js
+// Implicit inline inside DAG-CBOR with SHA2-256
+{
+  "name": "Alonzo Church",
+  "birthday": {
+    "/": {
+      "cid": null,
+      "dag": {
+        "day": 14,
+        "month": 6
+      }
+    }
+  }
+}
+
+// Converted to explicit CID
+{
+  "name": "Alonzo Church",
+  "birthday": {
+    "/": {
+      "cid": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4",
+      "dag": {
+        "day": 14,
+        "month": 6
+      }
+    }
+  }
+}
+
+// Canonical
+{
+  "birthday": {"/": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4"},
+  "name": "Alonzo Church"
+}
+```
+
+# 5 FAQ
+
+## 5.1 Why Shallow Nesting?
 
 The two options explored in this design were nesting the link under a `"/"` key, or adding another key as a sibing at the same level. For these reasons given below, it was decided that the nested strategy is the least likely to be misinterpreted or misimplemented.
 
-### 6.1.1 Sibling Strategy
+### 5.1.1 Sibling DAG
 
 ``` json
 { 
@@ -234,7 +288,7 @@ The advantagous features of the sibling strategy include:
 - The link (when present) looks exactly like a normal CID
 - It saves a few characters in JSON
 
-### 6.1.2 Shallowly Nested
+### 5.1.2 Shallowly Nested
 
 This is the one described in the specification.
 
@@ -265,7 +319,7 @@ The advantages of the nesting strategy include:
 - Distinguishes clearly the case where a `null` CID would otherwise be a parse error
 - Namespaces the keys, so that the key for the nested DAG is not 
 
-### 6.1.3 Deeply Nested
+### 5.1.3 Deeply Nested
 
 ``` json
 {
