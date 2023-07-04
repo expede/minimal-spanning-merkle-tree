@@ -43,21 +43,71 @@ Versus CARs which are tables
 
 Combinng the two
 
-# 2 IPLD Schema
+# 2 Format
+
+The basic structure of an inline link is similar to how reference links are represented in the most common IPLD codecs: signalling a link by wrapping the payload in a map with the single `"/"` key. By convention, this signals an IPLD-specific extension to a base codec.
+
+## 2.1 Inline Wrapper
+
+An inline link MUST be signalled by wrapping in a map with a `"/"` key.
+
+``` ipldsch
+type InlineWrapper struct {
+  inline InlineLink (rename "/")
+}
+```
+
+## 2.2 Inlined DAG Payload
+
+The inlined DAG payload MUST contain the inlined 
 
 ``` ipldsch
 type InlineLink struct {
   cid nullable Link (implicit Null)
   dag          Any
 }
+```
 
-type InlineWrapper struct {
-  inline InlineLink (rename "/")
+### 2.2.1 Explicit Encoding
+
+``` js
+{
+  "name": "Alonzo Church",
+  "birthdate": {
+    "/": {
+      "cid": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4", // Encoded as DAG-CBOR
+      "dag": {
+        "day": 14,
+        "month": 6
+      }
+    }
+  }
 }
 ```
 
-Not just the encoding because 
+### 2.2.2 Inherited Encoding
 
+``` js
+{
+  "name": "Alonzo Church",
+  "birthdate": {
+    "/": {
+      "cid": null, // Inherits encoding from container
+      "dag": {
+        "day": 14,
+        "month": 6
+      }
+    }
+  }
+}
+```
+
+# 3 Consequences
+ 
+> In principle, inlining is dead simple: just replace the call of a function by an instance of its body. But any compiler-writer will tell you that inlining is a black art, full of delicate compromises that work together to give good performance without unnecessary code bloat.
+>
+> — [SPJ] & [Simon Marlow], [Secrets of the Glasgow Haskell Compiler inliner][GHC Secrets]
+ 
 Note! Cannot just hash to check anymore. You need to actually unpack the container.
 
 optionally wrap the entire thig in a Wraper.
@@ -66,48 +116,12 @@ Spanning trees
 
 Similar to `{"/": {"bytes": ...}}`
 
-## 2.1 
-
-## Explicit 
-
-``` js
-{
-  "/": {
-    "cid": "bafyreig6gfqs6rm3w64hbffgcste5iugr3imvvum5yrouhuy5qgdjdcdiu", // Encoded as DAG-CBOR
-    "dag": {
-      "day": 29,
-      "month": 9
-    }
-  }
-}
-```
-
-``` ipldsch
-{
-  "age": 3,
-  "name": "Smokey",
-  "owner": {
-    "/": {
-      "cid": null, // Inherits encoding from container
-      "dag": {
-        "name": "Katie",
-        "species": "human"
-      }
-    }
-  },
-  "species": "cat",
-  ""
-}
-```
-
 # 4 Canonicalization
 
 Left-heavy spanning tree
 
-
-
-
 <!-- TODOS -->
+
 
 
 ```
@@ -133,3 +147,4 @@ type Capsule struct {
 [Fission]: https://fission.codes
 [Irakli Gozalishvili]: https://github.com/Gozala
 [Philipp Krüger]: https://github.com/matheus23
+[GHC Secrets]: https://www.microsoft.com/en-us/research/wp-content/uploads/2002/07/inline.pdf 
