@@ -168,6 +168,29 @@ flowchart
     d --> e
 ```
 
+## 5.3 CAR File
+
+
+``` mermaid
+flowchart LR
+    car --> a
+    a -.->|ref| b
+
+    car --> b
+
+    car --> c
+    b ~~~ c
+    a -.->|ref| c
+    
+    car --> d
+    b -.->|ref| d
+    c -.->|ref| d
+
+    car --> e
+    
+    d -.->|ref| e
+```
+
 <!-- TODOS -->
 
 ```
