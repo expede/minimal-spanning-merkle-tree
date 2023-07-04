@@ -139,17 +139,19 @@ flowchart
 
 There are two basic strategies that take advatage of inlining: duplication and spanning trees. When inlinig is not used, the strategy is a form of tabling (CAR files and blockstores), and are included here for completeness.
 
-| Strategy              | Inline              | Example Implementation |
-|-----------------------|---------------------|------------------------|
-| Redundant Tree        | Always              | Tree (JSON, CBOR)      |
-| Minimal Spanning Tree | Once per unique CID | Tree (JSON, CBOR)      |
-| Table                 | Never               | CAR file, blockstore   |
+| Name                  | Inlining Strategy   | Space | Lookup | Example Implementation |
+|-----------------------|---------------------|-------|--------|------------------------|
+| Redundant Tree        | Always              | Large | Fast   | Tree (JSON, CBOR)      |
+| Minimal Spanning Tree | Once per unique CID | Small | Slow   | Tree (JSON, CBOR)      |
+| Table                 | Never               | Small | Medium | CAR file, blockstore   |
 
 These strategies MAY be mixed: there is no way to encoforce that they be purely adhered to.
 
 ## 5.1 Redundant Tree
 
 The naive strategy inlines the nested DAG everywhere it is found. This trades off redundancy for simplicity: any part of the graph MAY be explored completely locally. If the graph is deep, this strategy MUST copy any linked children as well.
+
+Redundant trees have the best performance when working with data directly in memory as there is no indirection.
 
 ```mermaid
 flowchart
@@ -163,11 +165,11 @@ flowchart
 
 ## 5.2 Minimal Spanning Tree
 
-A balance between fully tabling connected graphs and inlining everywhere is inlining once and using references elsewhere. This MAY be achieved with a [minimal spanning tree][^no enforce]. 
+A balance between fully tabling connected graphs and inlining everywhere is inlining once and using references elsewhere. This MAY be achieved with a [minimal spanning tree].
 
-As a data transfer format, this encoding is often convenient. It eliminates the need for a special decoder and can use standard tools from JSON and CBOR. 
+As a data transfer format, this encoding is often convenient. It eliminates the need for a special decoder and can use standard tools from JSON and CBOR. Minimal spanning trees are often much smaller than redundant trees, and equal to or slightly smaller than an equivalent CAR file.
 
-[^no enforce]: Please note that there is no way to enforce that the spanning tree be minimal.
+There is a performance penalty when using a minimal spanning tree directly in memory since some links are references. Following those links requires scanning the entire structure per some rule, such as keeping all inlined links as far to the left as possible. However, this is less efficient than the inlined or tabled strategies. It is RECOMMENDED that if the data be unpacked to a more efficient strutcure (either lazily at runtime, or eagerly ahead of time) if it is heavily cross-linked.
 
 ``` mermaid
 flowchart
@@ -198,9 +200,97 @@ flowchart LR
     c -.->|ref| d
 
     car --> e
-    
     d -.->|ref| e
 ```
+
+# 6 FAQ
+
+## 6.1 Why Use Nesting?
+
+The two options explored in this design were nesting the link under a `"/"` key, or adding another key as a sibing at the same level. For these reasons given below, it was decided that the nested strategy is the least likely to be misinterpreted or misimplemented.
+
+### 6.1.1 Sibling Strategy
+
+This is the one described in the specification.
+
+``` json
+{ 
+  "/": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4",
+  ".": {
+    "day": 14,
+    "month": 6
+  }
+}
+
+{ 
+  "/": null,
+  ".": {
+    "day": 14,
+    "month": 6
+  }
+}
+```
+
+The advantagous features of the sibling strategy include:
+
+- The link (when present) looks exactly like a normal CID
+- It saves a few characters in JSON
+
+### 6.1.2 Shallowly Nested
+
+``` json
+{ 
+  "/": {
+    "cid": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4",
+    "dag": {
+      "day": 14,
+      "month": 6
+    }
+  }
+}
+
+{ 
+  "/": {
+    "cid": "null",
+    "dag": {
+      "day": 14,
+      "month": 6
+    }
+  }
+}
+```
+
+The advantages of the nesting strategy include:
+
+- Distinguishes clearly the case where a `null` CID would otherwise be a parse error
+- Namespaces the keys, so that the key for the nested DAG is not 
+
+### 6.1.3 Deeply Nested
+
+``` json
+{
+  "/": { 
+    "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4": {
+      "day": 14,
+      "month": 6
+    }
+  }
+}
+
+{
+  "/": { 
+    "auto": {
+      "day": 14,
+      "month": 6
+    }
+  }
+}
+```
+
+The deeply nested strategy is intuitive on first inspection, but has several drawbacks:
+
+- The syntax implies that multiple CIDs could be present (there MUST NOT be multiple)
+- Inheriting the CID encoding from the surrounding context requires a special string keyword
 
 <!--
 # 6 Feature Signalling
