@@ -8,8 +8,12 @@
 ## Authors
 
 * [Brooklyn Zelenka], [Fission]
+
+<!-- 
+TODO ask them! Otherwise move to the acknowledgements
 * [Irakli Gozalishvili], [Protocol Labs]
-* [Philipp Krüger], [Fission]
+* [Philipp Krüger], [Fission] 
+-->
 
 ## Language
 
@@ -118,11 +122,53 @@ Similar to `{"/": {"bytes": ...}}`
 
 # 4 Canonicalization
 
-Left-heavy spanning tree
+# 5 Encoding Strategies
+
+Encoding is trivial on many structures, such as linked lists and trees. The existence of diamond graphs pose a special problem: how many times should a linked graph be inlined versus referenced?
+
+```mermaid
+flowchart
+    a --> b
+    a --> c
+    b -.->|ref?| d
+    c -.->|ref?| d
+    d --> e
+```
+
+There are three basic strategies: duplication, spanning trees, and tabling. [CAR] files (and block stores) already handle the tabled approach, and so do not require discussion here.
+
+## 5.1 Duplication
+
+The naive strategy inlines the nested DAG everywhere it is found. This trades off redundancy for simplicity: any part of the graph MAY be explored completely locally. If the graph is deep, this strategy MUST copy any linked children as well.
+
+```mermaid
+flowchart
+    a --> b
+    a --> c
+    b --> d1[d]
+    c --> d2[d]
+    d1 --> e1[e]
+    d2 --> e2[e]
+```
+
+## 5.2 Minimal Spanning Tree
+
+A balance between fully tabling connected graphs and inlining everywhere is inlining once and using references elsewhere. This MAY be achieved with a [minimal spanning tree][^no enforce]. 
+
+As a data transfer format, this encoding is often convenient. It eliminates the need for a special decoder and can use standard tools for e.g. JSON and CBOR. 
+
+[^no enforce]: Please note that there is no way to enforce that the spanning tree be minimal.
+
+``` mermaid
+flowchart
+    a --> b
+    a --> c
+    b --> d
+    c -.->|ref| d
+    d --> e
+```
 
 <!-- TODOS -->
-
-
 
 ```
 -- FIXME use a feature table instead?
