@@ -211,8 +211,6 @@ The two options explored in this design were nesting the link under a `"/"` key,
 
 ### 6.1.1 Sibling Strategy
 
-This is the one described in the specification.
-
 ``` json
 { 
   "/": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4",
@@ -237,6 +235,8 @@ The advantagous features of the sibling strategy include:
 - It saves a few characters in JSON
 
 ### 6.1.2 Shallowly Nested
+
+This is the one described in the specification.
 
 ``` json
 { 
