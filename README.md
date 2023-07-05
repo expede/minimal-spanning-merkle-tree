@@ -164,7 +164,7 @@ flowchart
     d --> e
 ```
 
-There are two basic strategies that take advantage of inlining: duplication and spanning trees. When inlining is not used, the strategy is a form of tabling ([CAR] files and blockstores), and are included here for completeness.
+There are two basic strategies that take advantage of inlining: redundancy and [spanning trees]. When inlining is not used, the strategy is a form of tabling ([CAR] files and blockstores), and are included here for completeness.
 
 | Representation | Inlining Strategy   | Space | Traversal                      | Typical Implementation      |
 |----------------|---------------------|-------|--------------------------------|-----------------------------|
