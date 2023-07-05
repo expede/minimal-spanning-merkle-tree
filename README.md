@@ -164,7 +164,7 @@ flowchart
     d --> e
 ```
 
-There are two basic strategies that take advantage of inlining: duplication and spanning trees. When inlinig is not used, the strategy is a form of tabling ([CAR] files and blockstores), and are included here for completeness.
+There are two basic strategies that take advantage of inlining: duplication and spanning trees. When inlining is not used, the strategy is a form of tabling ([CAR] files and blockstores), and are included here for completeness.
 
 | Representation        | Inlining Strategy   | Space | Traversal                      | Typical Implementation      |
 |-----------------------|---------------------|-------|--------------------------------|-----------------------------|
@@ -300,7 +300,7 @@ The two options explored in this design were nesting the link under a `"/"` key,
 }
 ```
 
-The advantagous features of the sibling strategy include:
+The advantageous features of the sibling strategy include:
 
 - The link (when present) looks exactly like a normal CID
 - It saves a few characters in JSON
