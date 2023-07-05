@@ -6,12 +6,12 @@
 
 ## Authors
 
+- [Philipp Krüger], [Fission] 
 - [Brooklyn Zelenka], [Fission]
 
 <!-- 
 TODO ask them! Otherwise move to the acknowledgements
 * [Irakli Gozalishvili], [Protocol Labs]
-* [Philipp Krüger], [Fission] 
 -->
 
 ## Language
