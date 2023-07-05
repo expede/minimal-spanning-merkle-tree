@@ -2,11 +2,11 @@
 
 ## Editors
 
-* [Brooklyn Zelenka], [Fission]
+- [Brooklyn Zelenka], [Fission]
 
 ## Authors
 
-* [Brooklyn Zelenka], [Fission]
+- [Brooklyn Zelenka], [Fission]
 
 <!-- 
 TODO ask them! Otherwise move to the acknowledgements
@@ -20,33 +20,41 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 ## Dependencies
 
-* [IPLD]
+- [CID]
+- [IPLD]
 
 # 0 Abstract
 
-IPLD Inline Links are a format for including linked graphs in 
-
-Spanning DAG is a container for IPLD which exists somewhere between an unpacked representation and a [CAR file]. It includes many quality of life features including inlined linked DAGs and inherited encoding.
+IPLD Inline Links (IIL) are a format for expanding linked graphs "inline". This is helpful when inspecting data as a developer, for passing data to applications that expect tree-structured data, or when you don't know the configuration of the CID of a linked graph.
 
 # 1 Introduction
 
-# 1.1 Motivation
+## 1.1 Motivation
 
-[IPLD] is a format for describing Merkle DAGs with semantics similar to CBOR plus hash linking to other IPLD. The standard 
+[IPLD] is a format for describing Merkle DAGs with semantics similar to CBOR plus hash linking to other blocks of IPLD. It is an efficient machine encoding, but can be cumbersome to worth with in the broader tools ecosystem and developer ergomonics.
 
-It is often desirable to print IPLD with links inlined.
+### 1.1.1 Containers
 
-There's a difference in hashing between having data inline versus inserting a link. This helps. BUt also when you do this normally, you have to pick an encoding: you can just inherit.
+IPLD assumes that links will be referenced against a blockstore. The resulting disconnected structures — while efficient for machines — can be cumbersome to work with, debug, inspect, and transmit in non-IPLD aware applications.
 
-Versus identity CIDs.
+The ecosystem of tools for non-IPLD specific tools (JSON tools, CBOR tools, etc) is much wider than those designed for IPLD in particular. To make use of them today, a developer either needs to write custom code, or find an ad hoc method for reifying an IPLD DAG into some format without links such as JSON. Packaging data for 
 
-## 1.2 Design
+### 1.1.2 Codecs
 
-[IPLD] is a deterministic encoding scheme for data expressed in [common types][IPLD Data Model] plus content addressed links. The links are typically tabled.
+By referencing a specific [CID] in a link, the encoding and hash algorithm of that block are forced to be decided ahead of time. While common codecs are supported by most implementations, not all applications will support all possible encodings.
 
-Versus CARs which are tables
+The identity hash has been used for similar use cases, but this has several significant drawbacks including:
 
-Combinng the two
+- A codec and hash algorithm MUST be decided in advance
+- The resulting CID will not directly work with non-IPLD tools (at minimum there's a header)
+- Depending on the parameters other than hash, the data may be illegible without further processing
+- The identity CID is frozen by the Merkle root of the encoding structure
+
+## 1.2 Inline Links
+
+IPLD Inline Links solve for the above by adding a standard way to inline data in an IPLD document without altering its hash. The ability to inherit the CID configuration (hash, algorithm, base encoding, etc) from the surrounding context is included, but is OPTIONAL.
+
+Inline links do not modify the IPLD data model itself, but rather extend the format in a way that can be round-tripped to and from standard IPLD as desired.
 
 # 2 Format
 
@@ -128,6 +136,16 @@ Inherited encoding is helpful in many situations. A core intention of IPLD is to
 Inheriting from the surrounding context enables a level of flexibility for the nested data. Its hash and encoding MUST be the same as the parent, which is by far the most common case. In order to calculate the hash of the entire structure, the direct parent's encoding MUST be known, then passed to the encoder for the nested graph, the CID calculated, and placed into the parent. See more in [canonicalization].
 
 The implicit strategy MAY lead to cases where the same DAG generates different CIDs in the same strutcure, based on different parent encoding contexts.
+
+## 2.3 Capsule
+
+To signal that a payload contains inlined links, the following capsule MAY be used:
+
+``` ipldsch
+type InlineLinkCapsule struct {
+  c Any (rename "ipld/inline/v0.1")
+}
+```
 
 # 3 Encoding Strategies
 
@@ -371,10 +389,14 @@ type ExtendedIPLD struct {
   data Any (rename "xipld/v0.1")
 }
 ```
+
+... versus autocoedec?
 -->
 
 [Brooklyn Zelenka]: https://github.com/expede 
 [Fission]: https://fission.codes
+[GHC Secrets]: https://www.microsoft.com/en-us/research/wp-content/uploads/2002/07/inline.pdf 
 [Irakli Gozalishvili]: https://github.com/Gozala
 [Philipp Krüger]: https://github.com/matheus23
-[GHC Secrets]: https://www.microsoft.com/en-us/research/wp-content/uploads/2002/07/inline.pdf 
+[SPJ]: https://en.wikipedia.org/wiki/Simon_Peyton_Jones
+[Simon Marlow]: https://en.wikipedia.org/wiki/Simon_Marlow
