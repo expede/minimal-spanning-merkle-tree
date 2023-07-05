@@ -166,11 +166,11 @@ flowchart
 
 There are two basic strategies that take advantage of inlining: duplication and spanning trees. When inlining is not used, the strategy is a form of tabling ([CAR] files and blockstores), and are included here for completeness.
 
-| Representation        | Inlining Strategy   | Space | Traversal                      | Typical Implementation      |
-|-----------------------|---------------------|-------|--------------------------------|-----------------------------|
-| Redundant Tree        | Always              | Large | Fast                           | Standard JSON, CBOR, etc    |
-| Minimal Spanning Tree | Once per unique CID | Small | Often slow; depends on content | DAG-JSON, DAG-CBOR, etc     |
-| Table                 | Never               | Small | Medium                         | [CAR] file, blockstore, etc |
+| Representation | Inlining Strategy   | Space | Traversal                      | Typical Implementation      |
+|----------------|---------------------|-------|--------------------------------|-----------------------------|
+| Redundant Tree | Always              | Large | Fast                           | Standard JSON, CBOR, etc    |
+| Spanning Tree  | Once per unique CID | Small | Often slow; depends on content | DAG-JSON, DAG-CBOR, etc     |
+| Table          | Never               | Small | Medium                         | [CAR] file, blockstore, etc |
 
 These strategies MAY be mixed: there is no way to enforce that they be purely adhered to.
 
@@ -190,13 +190,13 @@ flowchart
     d2 --> e2[e]
 ```
 
-## 3.2 Minimal Spanning Tree
+## 3.2 Spanning Tree
 
-A balance between fully tabling connected graphs and inlining everywhere is inlining once and using references elsewhere. This MAY be achieved with a [minimal spanning tree].
+A balance between fully tabling connected graphs and inlining everywhere is inlining once and using references elsewhere. This MAY be achieved with a [spanning tree].
 
-As a data transfer format, this encoding is often convenient. It eliminates the need for a special decoder and can use standard tools from JSON and CBOR. Minimal spanning trees are often much smaller than redundant trees, and equal to or slightly smaller than an equivalent CAR file.
+As a data transfer format, this encoding is often convenient. It eliminates the need for a special decoder and can use standard tools from JSON and CBOR. Spanning trees are often much smaller than redundant trees, and equal to or slightly smaller than an equivalent CAR file.
 
-There is a performance penalty when using a minimal spanning tree directly in memory since some links are references. Following those links requires scanning the entire structure per some rule, such as keeping all inlined links as far to the left as possible. However, this is less efficient than the inlined or tabled strategies. It is RECOMMENDED that if the data be unpacked to a more efficient structure (either lazily at runtime, or eagerly ahead of time) if it is heavily cross-linked.
+There is a performance penalty when using a spanning tree directly in memory since some links are references. Following those links requires scanning the entire structure per some rule, such as keeping all inlined links as far to the left as possible. However, this is less efficient than the inlined or tabled strategies. It is RECOMMENDED that if the data be unpacked to a more efficient structure (either lazily at runtime, or eagerly ahead of time) if it is heavily cross-linked.
 
 ``` mermaid
 flowchart
@@ -375,3 +375,4 @@ The deeply nested strategy is intuitive on first inspection, but has several dra
 [RFC 2119]: https://www.rfc-editor.org/rfc/rfc2119
 [SPJ]: https://en.wikipedia.org/wiki/Simon_Peyton_Jones
 [Simon Marlow]: https://en.wikipedia.org/wiki/Simon_Marlow
+[spanning tree]: https://en.wikipedia.org/wiki/Spanning_tree
