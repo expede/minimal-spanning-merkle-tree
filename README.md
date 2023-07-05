@@ -363,39 +363,12 @@ The deeply nested strategy is intuitive on first inspection, but has several dra
 - The syntax implies that multiple CIDs could be present (there MUST NOT be multiple)
 - Inheriting the CID encoding from the surrounding context requires a special string keyword
 
-<!--
-# 6 Feature Signalling
-
-Extended IPLD / xIPLD
-
-``` json
-{
-  "xipld/v0.1": {
-    "h": {
-      "inline": "true",
-      "foo": "bar"
-     },
-    "d": {
-      "hello": "world",
-      "time": 1234567890
-    }
-  }
-}
-```
-
-``` ipldsch
-type ExtendedIPLD struct {
-  head {String : Any}
-  data Any (rename "xipld/v0.1")
-}
-```
-
-... versus autocoedec?
--->
-
 [Brooklyn Zelenka]: https://github.com/expede 
+[CAR]: https://ipld.io/specs/transport/car/carv1/
+[CID]: https://github.com/multiformats/cid
 [Fission]: https://fission.codes
 [GHC Secrets]: https://www.microsoft.com/en-us/research/wp-content/uploads/2002/07/inline.pdf 
+[IPLD]: https://ipld.io/docs/
 [Irakli Gozalishvili]: https://github.com/Gozala
 [Philipp Krüger]: https://github.com/matheus23
 [SPJ]: https://en.wikipedia.org/wiki/Simon_Peyton_Jones
