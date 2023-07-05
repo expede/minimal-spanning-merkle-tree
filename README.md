@@ -25,13 +25,13 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # 0 Abstract
 
-IPLD Inline Links (IIL) are a format for expanding linked graphs "inline". This is helpful when inspecting data as a developer, for passing data to applications that expect tree-structured data, or when you don't know the configuration of the CID of a linked graph.
+IPLD Inline Links are a format for expanding linked graphs "inline". This is helpful when inspecting data as a developer, for passing data to applications that expect tree-structured data, or when you don't know the configuration of the CID of a linked graph.
 
 # 1 Introduction
 
 ## 1.1 Motivation
 
-[IPLD] is a format for describing Merkle DAGs with semantics similar to CBOR plus hash linking to other blocks of IPLD. It is an efficient machine encoding, but can be cumbersome to worth with in the broader tools ecosystem and developer ergomonics.
+[IPLD] is a format for describing Merkle DAGs with semantics similar to CBOR plus hash linking to other blocks of IPLD. It is an efficient machine encoding, but can be cumbersome to worth with in the broader tools ecosystem and developer erogonomics.
 
 ### 1.1.1 Containers
 
@@ -72,7 +72,7 @@ type InlineWrapper struct {
 
 ## 2.2 Inlined DAG Payload
 
-The inlined DAG payload MUST contain the inlined DAG. The CID MAY be present, omited, or set to `null`.
+The inlined DAG payload MUST contain the inlined DAG. The CID MAY be present, omitted, or set to `null`.
 
 ``` ipldsch
 type InlineLink struct {
@@ -131,11 +131,11 @@ Explicit encoding and hash algorithm work as normal: the CID MAY be given in adv
 }
 ```
 
-Inherited encoding is helpful in many situations. A core intention of IPLD is to abstract away from the exact data encoding. When including a link in IPLD, a hash algorithm and encoding MUST be hardcoded. Such choices are often premature, and lead to awkward design choices to avoid this encoding, or excpetions in prose.
+Inherited encoding is helpful in many situations. A core intention of IPLD is to abstract away from the exact data encoding. When including a link in IPLD, a hash algorithm and encoding MUST be hardcoded. Such choices are often premature, and lead to awkward design choices to avoid this encoding, or exceptions in prose.
 
 Inheriting from the surrounding context enables a level of flexibility for the nested data. Its hash and encoding MUST be the same as the parent, which is by far the most common case. In order to calculate the hash of the entire structure, the direct parent's encoding MUST be known, then passed to the encoder for the nested graph, the CID calculated, and placed into the parent. See more in [canonicalization].
 
-The implicit strategy MAY lead to cases where the same DAG generates different CIDs in the same strutcure, based on different parent encoding contexts.
+The implicit strategy MAY lead to cases where the same DAG generates different CIDs in the same structure, based on different parent encoding contexts.
 
 ## 2.3 Capsule
 
@@ -164,7 +164,7 @@ flowchart
     d --> e
 ```
 
-There are two basic strategies that take advatage of inlining: duplication and spanning trees. When inlinig is not used, the strategy is a form of tabling (CAR files and blockstores), and are included here for completeness.
+There are two basic strategies that take advantage of inlining: duplication and spanning trees. When inlinig is not used, the strategy is a form of tabling (CAR files and blockstores), and are included here for completeness.
 
 | Representation        | Inlining Strategy   | Space | Traversal                      | Typical Implementation    |
 |-----------------------|---------------------|-------|--------------------------------|---------------------------|
@@ -172,7 +172,7 @@ There are two basic strategies that take advatage of inlining: duplication and s
 | Minimal Spanning Tree | Once per unique CID | Small | Often slow; depends on content | DAG-JSON, DAG-CBOR, etc   |
 | Table                 | Never               | Small | Medium                         | CAR file, blockstore, etc |
 
-These strategies MAY be mixed: there is no way to encoforce that they be purely adhered to.
+These strategies MAY be mixed: there is no way to enforce that they be purely adhered to.
 
 ## 3.1 Redundant Tree
 
@@ -196,7 +196,7 @@ A balance between fully tabling connected graphs and inlining everywhere is inli
 
 As a data transfer format, this encoding is often convenient. It eliminates the need for a special decoder and can use standard tools from JSON and CBOR. Minimal spanning trees are often much smaller than redundant trees, and equal to or slightly smaller than an equivalent CAR file.
 
-There is a performance penalty when using a minimal spanning tree directly in memory since some links are references. Following those links requires scanning the entire structure per some rule, such as keeping all inlined links as far to the left as possible. However, this is less efficient than the inlined or tabled strategies. It is RECOMMENDED that if the data be unpacked to a more efficient strutcure (either lazily at runtime, or eagerly ahead of time) if it is heavily cross-linked.
+There is a performance penalty when using a minimal spanning tree directly in memory since some links are references. Following those links requires scanning the entire structure per some rule, such as keeping all inlined links as far to the left as possible. However, this is less efficient than the inlined or tabled strategies. It is RECOMMENDED that if the data be unpacked to a more efficient structure (either lazily at runtime, or eagerly ahead of time) if it is heavily cross-linked.
 
 ``` mermaid
 flowchart
@@ -278,7 +278,7 @@ To calculate the CID of a DAG that contains inline links, first walk the graph a
 
 ## 5.1 Why Shallow Nesting?
 
-The two options explored in this design were nesting the link under a `"/"` key, or adding another key as a sibing at the same level. For these reasons given below, it was decided that the nested strategy is the least likely to be misinterpreted or misimplemented.
+The two options explored in this design were nesting the link under a `"/"` key, or adding another key as a sibling at the same level. For these reasons given below, it was decided that the nested strategy is the least likely to be misinterpreted or misimplemented.
 
 ### 5.1.1 Sibling DAG
 
