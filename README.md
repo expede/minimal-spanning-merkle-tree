@@ -148,11 +148,11 @@ flowchart
 
 There are two basic strategies that take advatage of inlining: duplication and spanning trees. When inlinig is not used, the strategy is a form of tabling (CAR files and blockstores), and are included here for completeness.
 
-| Name                  | Inlining Strategy   | Space | Traversal                      | Example Implementation  |
-|-----------------------|---------------------|-------|--------------------------------|-------------------------|
-| Redundant Tree        | Always              | Large | Fast                           | Normal JSON, CBOR, etc  |
-| Minimal Spanning Tree | Once per unique CID | Small | Often slow; depends on content | DAG-JSON, DAG-CBOR, etc |
-| Table                 | Never               | Small | Medium                         | CAR file, blockstore |
+| Representation        | Inlining Strategy   | Space | Traversal                      | Typical Implementation    |
+|-----------------------|---------------------|-------|--------------------------------|---------------------------|
+| Redundant Tree        | Always              | Large | Fast                           | Standard JSON, CBOR, etc  |
+| Minimal Spanning Tree | Once per unique CID | Small | Often slow; depends on content | DAG-JSON, DAG-CBOR, etc   |
+| Table                 | Never               | Small | Medium                         | CAR file, blockstore, etc |
 
 These strategies MAY be mixed: there is no way to encoforce that they be purely adhered to.
 
