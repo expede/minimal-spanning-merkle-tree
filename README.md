@@ -25,7 +25,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # 0 Abstract
 
-IPLD Inline Links are a format for expanding linked graphs "inline". This is helpful when inspecting data as a developer, for passing data to applications that expect tree-structured data, or when you don't know the configuration of the CID of a linked graph.
+This document presents "IPLD Inline Links", a format for expanding linked graphs "inline". This is helpful when inspecting data as a developer, for passing data to applications that expect tree-structured data, or when you don't know the configuration of the CID of a linked graph.
 
 # 1 Introduction
 
@@ -164,13 +164,13 @@ flowchart
     d --> e
 ```
 
-There are two basic strategies that take advantage of inlining: duplication and spanning trees. When inlinig is not used, the strategy is a form of tabling (CAR files and blockstores), and are included here for completeness.
+There are two basic strategies that take advantage of inlining: duplication and spanning trees. When inlinig is not used, the strategy is a form of tabling ([CAR] files and blockstores), and are included here for completeness.
 
-| Representation        | Inlining Strategy   | Space | Traversal                      | Typical Implementation    |
-|-----------------------|---------------------|-------|--------------------------------|---------------------------|
-| Redundant Tree        | Always              | Large | Fast                           | Standard JSON, CBOR, etc  |
-| Minimal Spanning Tree | Once per unique CID | Small | Often slow; depends on content | DAG-JSON, DAG-CBOR, etc   |
-| Table                 | Never               | Small | Medium                         | CAR file, blockstore, etc |
+| Representation        | Inlining Strategy   | Space | Traversal                      | Typical Implementation      |
+|-----------------------|---------------------|-------|--------------------------------|-----------------------------|
+| Redundant Tree        | Always              | Large | Fast                           | Standard JSON, CBOR, etc    |
+| Minimal Spanning Tree | Once per unique CID | Small | Often slow; depends on content | DAG-JSON, DAG-CBOR, etc     |
+| Table                 | Never               | Small | Medium                         | [CAR] file, blockstore, etc |
 
 These strategies MAY be mixed: there is no way to enforce that they be purely adhered to.
 
@@ -368,6 +368,7 @@ The deeply nested strategy is intuitive on first inspection, but has several dra
 [CID]: https://github.com/multiformats/cid
 [Fission]: https://fission.codes
 [GHC Secrets]: https://www.microsoft.com/en-us/research/wp-content/uploads/2002/07/inline.pdf 
+[IPLD Canonicalization]: #4-ipld-canonicalization
 [IPLD]: https://ipld.io/docs/
 [Irakli Gozalishvili]: https://github.com/Gozala
 [Philipp Krüger]: https://github.com/matheus23
