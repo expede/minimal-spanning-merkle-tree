@@ -31,7 +31,7 @@ This document presents "IPLD Inline Links", a format for expanding linked graphs
 
 ## 1.1 Motivation
 
-[IPLD] is a format for describing Merkle DAGs with semantics similar to CBOR plus hash linking to other blocks of IPLD. It is an efficient machine encoding, but can be cumbersome to worth with in the broader tools ecosystem and developer erogonomics.
+[IPLD] is a format for describing Merkle DAGs with semantics similar to CBOR plus hash linking to other blocks of IPLD. It is an efficient machine encoding, but can be cumbersome to worth with in the broader tools ecosystem and developer ergonomics.
 
 ### 1.1.1 Containers
 
