@@ -368,6 +368,7 @@ The deeply nested strategy is intuitive on first inspection, but has several dra
 [IPLD]: https://ipld.io/docs/
 [Irakli Gozalishvili]: https://github.com/Gozala
 [Philipp Krüger]: https://github.com/matheus23
+[Protocol Labs]: https://protocol.ai/
 [RFC 2119]: https://www.rfc-editor.org/rfc/rfc2119
 [SPJ]: https://en.wikipedia.org/wiki/Simon_Peyton_Jones
 [Simon Marlow]: https://en.wikipedia.org/wiki/Simon_Marlow
