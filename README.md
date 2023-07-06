@@ -209,20 +209,20 @@ Included here for completeness, a tabling strategy SHOULD be used when no inlini
 
 ``` mermaid
 flowchart LR
-    car --> a
+    CAR --> a
     a -.->|ref| b
 
-    car --> b
+    CAR --> b
 
-    car --> c
+    CAR --> c
     b ~~~ c
     a -.->|ref| c
     
-    car --> d
+    CAR --> d
     b -.->|ref| d
     c -.->|ref| d
 
-    car --> e
+    CAR --> e
     d -.->|ref| e
 ```
 
