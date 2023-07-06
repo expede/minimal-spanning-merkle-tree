@@ -166,7 +166,7 @@ There are two basic strategies that take advantage of inlining: redundancy and [
 |----------------|---------------------|-------|--------------------------------|-----------------------------|
 | Redundant Tree | Always              | Large | Fast                           | Standard JSON, CBOR, etc    |
 | Spanning Tree  | Once per unique CID | Small | Often slow; depends on content | DAG-JSON, DAG-CBOR, etc     |
-| Table          | Never               | Small | Medium                         | [CAR] file, blockstore, etc |
+| Table          | Never               | Medium | Medium                         | [CAR] file, blockstore, etc |
 
 These strategies MAY be mixed: there is no way to enforce that they be purely adhered to.
 
