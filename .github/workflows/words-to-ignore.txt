@@ -93,6 +93,7 @@ responder
 secp
 signalled
 signalling
+subgraphs
 trustless
 unpadded
 url
