@@ -48,7 +48,7 @@ The identity hash has been used for similar use cases, but this has several sign
 
 ## 1.2 Inline Links
 
-IPLD Inline Links solve for the above by adding a standard way to inline data in an IPLD document without altering its hash. Link configuration (hashing algorithm, data encoding) is inherited from the surrounding context, unless link is present, explicitly detailing that configuration.
+IPLD Inline Links solve for the above by adding a standard way to inline data in an IPLD document without altering its hash. Link configuration (hashing algorithm, data encoding) is inherited from the surrounding context, unless the link is present. Explicitly including the CID to provide this configuation is OPTIONAL.
 
 Inline links do not modify the IPLD data model itself, but rather extend the format in a way that can be round-tripped to and from standard IPLD as desired.
 
