@@ -1,4 +1,4 @@
-# IPLD Inline Link Specification v0.1.0
+# Embedded IPLD Inline Link Specification v0.1.0
 
 ## Editors
 
@@ -56,22 +56,22 @@ Inline links do not modify the IPLD data model itself, but rather extend the for
 
 The basic structure of an inline link is similar to how reference links are represented in the most common IPLD codecs: signalling a link by wrapping the payload in a map with the single `"/"` key. By convention, this signals an IPLD-specific extension to a base codec.
 
-## 2.1 Inline Wrapper
+## 2.1 Embed Wrapper
 
 An inline link MUST be signalled by wrapping in a map with a `"/"` key.
 
 ``` ipldsch
-type InlineWrapper struct {
-  inline InlineLink (rename "/")
+type EmbedWrapper struct {
+  embed InlineLink (rename "/")
 }
 ```
 
-## 2.2 Inlined DAG Payload
+## 2.2 Embedded IPLD Payload
 
 The inlined DAG payload MUST contain the inlined DAG. The CID MAY be present or set to `Null`.
 
 ``` ipldsch
-type InlineLink struct {
+type Embed struct {
   link nullable Link
   data          Any
 }
@@ -258,11 +258,17 @@ To calculate the CID of a DAG that contains inline links, first walk the graph a
 
 # 5 FAQ
 
-## 5.1 Why Shallow Nesting?
+## 5.1 Why No Fine-Grained Configuration?
+
+In the present specification, the `"link"` field has two settings: a CID or `Null`. The presence of a CID forces the exact CID parameters to be used. This raises the question: why not let those be configured separately (e.g. set the hash function but not the codec)?
+
+While more flexible, the use cases for it seem to be very niche. Given the increased complexity, it was decided againt. If more granular configuration is later found to be a critial feature, it can be added at that time.
+
+## 5.2 Why Shallow Nesting?
 
 The two options explored in this design were nesting the link under a `"/"` key, or adding another key as a sibling at the same level. For these reasons given below, it was decided that the nested strategy is the least likely to be misinterpreted or misimplemented.
 
-### 5.1.1 Sibling DAG
+### 5.2.1 Sibling DAG
 
 ``` json
 { 
@@ -287,7 +293,7 @@ The advantageous features of the sibling strategy include:
 - The link (when present) looks exactly like a normal CID
 - It saves a few characters in JSON
 
-### 5.1.2 Shallowly Nested
+### 5.2.2 Shallowly Nested
 
 This is the one described in the specification.
 
@@ -318,7 +324,7 @@ The advantages of the nesting strategy include:
 - Distinguishes clearly the case where a `null` CID would otherwise be a parse error
 - Namespaces the inline link under the `"/"` signal
 
-### 5.1.3 Deeply Nested
+### 5.2.3 Deeply Nested
 
 ``` json
 {
