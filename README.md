@@ -68,12 +68,12 @@ type InlineWrapper struct {
 
 ## 2.2 Inlined DAG Payload
 
-The inlined DAG payload MUST contain the inlined DAG. The CID MAY be present, omitted, or set to `null`.
+The inlined DAG payload MUST contain the inlined DAG. The CID MAY be present or set to `Null`.
 
 ``` ipldsch
 type InlineLink struct {
-  cid nullable Link (implicit Null)
-  dag          Any
+  link nullable Link
+  data          Any
 }
 ```
 
@@ -84,8 +84,8 @@ type InlineLink struct {
   "name": "Alonzo Church",
   "birthday": {
     "/": {
-      "cid": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4", // DAG-CBOR & SHA2-256
-      "dag": {
+      "link": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4", // DAG-CBOR & SHA2-256
+      "data": {
         "day": 14,
         "month": 6
       }
@@ -94,7 +94,7 @@ type InlineLink struct {
 }
 ```
 
-Explicit encoding and hash algorithm work as normal: the CID MAY be given in advance via the `"cid"` field, and MUST validly describe the `"dag"` field. 
+Explicit encoding and hash algorithm work as normal: the CID MAY be given in advance via the `"link"` field, and MUST validly describe the `"data"` field. 
  
 ### 2.2.2 Inherited
 
@@ -103,22 +103,8 @@ Explicit encoding and hash algorithm work as normal: the CID MAY be given in adv
   "name": "Alonzo Church",
   "birthday": {
     "/": {
-      "cid": null, // Inherits encoding & hash algorithm from container
-      "dag": {
-        "day": 14,
-        "month": 6
-      }
-    }
-  }
-}
-
-// Or omit the "cid" field
-
-{
-  "name": "Alonzo Church",
-  "birthday": {
-    "/": {
-      "dag": {
+      "link": null, // Inherits encoding & hash algorithm from container
+      "data": {
         "day": 14,
         "month": 6
       }
@@ -240,8 +226,8 @@ To calculate the CID of a DAG that contains inline links, first walk the graph a
   "name": "Alonzo Church",
   "birthday": {
     "/": {
-      "cid": null,
-      "dag": {
+      "link": null,
+      "data": {
         "day": 14,
         "month": 6
       }
@@ -254,8 +240,8 @@ To calculate the CID of a DAG that contains inline links, first walk the graph a
   "name": "Alonzo Church",
   "birthday": {
     "/": {
-      "cid": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4",
-      "dag": {
+      "link": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4",
+      "data": {
         "day": 14,
         "month": 6
       }
@@ -308,8 +294,8 @@ This is the one described in the specification.
 ``` json
 { 
   "/": {
-    "cid": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4",
-    "dag": {
+    "link": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4",
+    "data": {
       "day": 14,
       "month": 6
     }
@@ -318,8 +304,8 @@ This is the one described in the specification.
 
 { 
   "/": {
-    "cid": "null",
-    "dag": {
+    "link": "null",
+    "data": {
       "day": 14,
       "month": 6
     }
