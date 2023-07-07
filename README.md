@@ -31,7 +31,7 @@ This document presents "IPLD Inline Links", a format for expanding linked graphs
 
 ### 1.1.1 Containers
 
-IPLD assumes that links will be referenced against a blockstore. The resulting disconnected structures — while efficient for machines — can be cumbersome to work with, debug, inspect, and transmit in non-IPLD aware applications. [Locality of reference] also plays a role: IPLD links are no guaranteed to resolve. Data that is likely to be accessed together being kept inline avoids going out to the blockstore (which may nondeterministaically incur a network lookup).
+IPLD assumes that links will be referenced against a blockstore. The resulting disconnected structures — while efficient for machines — can be cumbersome to work with, debug, inspect, and transmit in non-IPLD aware applications. [Locality of reference] also plays a role: IPLD links are no guaranteed to resolve. Data that is likely to be accessed together being kept inline avoids going out to the blockstore, which may incur a failable network lookup.
 
 The ecosystem of tools for non-IPLD specific tools (JSON tools, CBOR tools, etc) is much wider than those designed for IPLD in particular. To make use of them today, a developer either needs to write custom code, or find an ad hoc method for reifying an IPLD DAG into some format without links such as JSON. Packaging data for 
 
