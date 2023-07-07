@@ -330,7 +330,7 @@ This is the one described in the specification.
 The advantages of the nesting strategy include:
 
 - Distinguishes clearly the case where a `null` CID would otherwise be a parse error
-- Namespaces the keys, so that the key for the nested DAG is not 
+- Namespaces the inline link under the `"/"` signal
 
 ### 5.1.3 Deeply Nested
 
