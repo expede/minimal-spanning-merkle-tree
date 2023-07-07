@@ -48,7 +48,7 @@ The identity hash has been used for similar use cases, but this has several sign
 
 ## 1.2 Inline Links
 
-IPLD Inline Links solve for the above by adding a standard way to inline data in an IPLD document without altering its hash. Link configuration (hashing algorithm, data encoding) is inherited from the surrounding context, unless the link is present. Explicitly including the CID to provide this configuation is OPTIONAL.
+IPLD Inline Links solve for the above by adding a standard way to inline data in an IPLD document without altering its hash. Link configuration (hashing algorithm, data encoding) is inherited from the surrounding context, unless the link is present. Explicitly including the CID to provide this configuration is OPTIONAL.
 
 Inline links do not modify the IPLD data model itself, but rather extend the format in a way that can be round-tripped to and from standard IPLD as desired.
 
@@ -262,7 +262,7 @@ To calculate the CID of a DAG that contains inline links, first walk the graph a
 
 In the present specification, the `"link"` field has two settings: a CID or `Null`. The presence of a CID forces the exact CID parameters to be used. This raises the question: why not let those be configured separately (e.g. set the hash function but not the codec)?
 
-While more flexible, the use cases for it seem to be very niche. Given the increased complexity, it was decided againt. If more granular configuration is later found to be a critial feature, it can be added at that time.
+While more flexible, the use cases for it seem to be very niche. Given the increased complexity, it was decided against. If more granular configuration is later found to be a critical feature, it can be added at that time.
 
 ## 5.2 Why Shallow Nesting?
 
