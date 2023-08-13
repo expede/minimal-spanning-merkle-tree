@@ -72,7 +72,7 @@ The inlined DAG payload MUST contain the inlined DAG. The CID MAY be present or 
 
 ``` ipldsch
 type Embed struct {
-  link nullable Link
+  link nullable &Any
   data          Any
 }
 ```
