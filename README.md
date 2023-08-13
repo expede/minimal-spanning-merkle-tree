@@ -84,7 +84,7 @@ type Embed struct {
   "name": "Alonzo Church",
   "birthday": {
     "/": {
-      "link": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4", // DAG-CBOR & SHA2-256
+      "link": { "/": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4" }, // DAG-CBOR & SHA2-256
       "data": {
         "day": 14,
         "month": 6
