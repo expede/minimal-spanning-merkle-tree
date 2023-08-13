@@ -300,7 +300,7 @@ This is the one described in the specification.
 ``` json
 { 
   "/": {
-    "link": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4",
+    "link": { "/": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4" },
     "data": {
       "day": 14,
       "month": 6
