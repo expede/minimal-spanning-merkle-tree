@@ -84,7 +84,6 @@ type Embed struct {
   "name": "Alonzo Church",
   "birthday": {
     "/": {
-      "link": { "/": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4" }, // DAG-CBOR & SHA2-256
       "data": {
         "day": 14,
         "month": 6
@@ -103,7 +102,6 @@ Explicit encoding and hash algorithm work as normal: the CID MAY be given in adv
   "name": "Alonzo Church",
   "birthday": {
     "/": {
-      "link": null, // Inherits encoding & hash algorithm from container
       "data": {
         "day": 14,
         "month": 6
