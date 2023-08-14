@@ -62,18 +62,7 @@ An inline link MUST be signalled by wrapping in a map with a `"/"` key.
 
 ``` ipldsch
 type EmbedWrapper struct {
-  embed InlineLink (rename "/")
-}
-```
-
-## 2.2 Embedded IPLD Payload
-
-The inlined DAG payload MUST contain the inlined DAG. The CID MAY be present or set to `Null`.
-
-``` ipldsch
-type Embed struct {
-  link nullable &Any
-  data          Any
+  embed Inline (rename ".")
 }
 ```
 
@@ -83,18 +72,15 @@ type Embed struct {
 {
   "name": "Alonzo Church",
   "birthday": {
-    "/": {
-      "link": { "/": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4" }, // DAG-CBOR & SHA2-256
-      "data": {
-        "day": 14,
-        "month": 6
-      }
+    ".": {
+      "day": 14,
+      "month": 6
     }
   }
 }
 ```
 
-Explicit encoding and hash algorithm work as normal: the CID MAY be given in advance via the `"link"` field, and MUST validly describe the `"data"` field. 
+Explicit encoding and hash algorithm work as normal: the CID MAY be given in advance via the `"link"` field, and MUST validly describe the `"."` field. 
  
 ### 2.2.2 Inherited
 
@@ -102,12 +88,9 @@ Explicit encoding and hash algorithm work as normal: the CID MAY be given in adv
 {
   "name": "Alonzo Church",
   "birthday": {
-    "/": {
-      "link": null, // Inherits encoding & hash algorithm from container
-      "data": {
-        "day": 14,
-        "month": 6
-      }
+    ".": {
+      "day": 14,
+      "month": 6
     }
   }
 }
@@ -148,10 +131,10 @@ flowchart
 
 There are two basic strategies that take advantage of inlining: redundancy and [spanning tree]s. When inlining is not used, the strategy is a form of tabling ([CAR] files and blockstores), and are included here for completeness.
 
-| Representation | Inlining Strategy   | Space | Traversal                      | Typical Implementation      |
-|----------------|---------------------|-------|--------------------------------|-----------------------------|
-| Redundant Tree | Always              | Large | Fast                           | Standard JSON, CBOR, etc    |
-| Spanning Tree  | Once per unique CID | Small | Often slow; depends on content | DAG-JSON, DAG-CBOR, etc     |
+| Representation | Inlining Strategy   | Space  | Traversal                      | Typical Implementation      |
+|----------------|---------------------|--------|--------------------------------|-----------------------------|
+| Redundant Tree | Always              | Large  | Fast                           | Standard JSON, CBOR, etc    |
+| Spanning Tree  | Once per unique CID | Small  | Often slow; depends on content | DAG-JSON, DAG-CBOR, etc     |
 | Table          | Never               | Medium | Medium                         | [CAR] file, blockstore, etc |
 
 These strategies MAY be mixed: there is no way to enforce that they be purely adhered to.
@@ -221,30 +204,12 @@ To calculate the CID of a DAG that contains inline links, first walk the graph a
 ## 4.1 Example
 
 ``` js
-// Implicit inline inside DAG-CBOR with SHA2-256
 {
   "name": "Alonzo Church",
   "birthday": {
-    "/": {
-      "link": null,
-      "data": {
-        "day": 14,
-        "month": 6
-      }
-    }
-  }
-}
-
-// Converted to explicit CID
-{
-  "name": "Alonzo Church",
-  "birthday": {
-    "/": {
-      "link": "bafyreif7dowvi5nuzzijawl22vpqsughufapj455diyflrk7htswzbjid4",
-      "data": {
-        "day": 14,
-        "month": 6
-      }
+    ".": {
+      "day": 14,
+      "month": 6
     }
   }
 }
